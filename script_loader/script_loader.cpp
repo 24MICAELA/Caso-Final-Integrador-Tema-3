@@ -2,31 +2,31 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
+#include <cstring>
 
-using namespace std;
-
-// Función para registrar errores en un archivo log
-void log_error(const string& error_message) {
-    ofstream error_log("error_log.txt", ios::app); // Abrir en modo append
-    if (error_log.is_open()) {
-        error_log << error_message << endl;
-        error_log.close();
+// Crear un log de errores
+void log_error(const std::string& error_message) {
+    std::ofstream log_file("error_log.txt", std::ios::app);
+    if (log_file.is_open()) {
+        log_file << error_message << std::endl;
+        log_file.close();
     } else {
-        cerr << "Error al intentar escribir en el archivo de log." << endl;
+        std::cerr << "No se pudo abrir el archivo de log" << std::endl;
     }
 }
 
-// Definición de la función load_script
-void load_script(const char* filename, bool show_script) { // Sin valor predeterminado aquí
-    string script;
+// Cargar script desde un archivo
+void load_script(const char* filename, bool show_script) {
+    std::string script;
     FILE* f = nullptr;
 
     try {
         f = fopen(filename, "rb");
         if (!f) {
-            string error = "Error al abrir el archivo: " + string(filename);
-            cerr << error << endl;
-            log_error(error); // Registrar el error en el log
+            std::string error_message = "Error de apertura del archivo: ";
+            error_message += filename;
+            log_error(error_message);
+            std::cerr << error_message << std::endl;
             return;
         }
 
@@ -36,24 +36,25 @@ void load_script(const char* filename, bool show_script) { // Sin valor predeter
             buf[c] = 0;
             script.append(buf);
         }
+
         fclose(f);
-        f = nullptr;
 
         if (show_script) {
-            cout << script << endl;
+            std::cout << script << std::endl;
         }
-
-    } catch (const exception& e) {
-        cerr << "Error durante la lectura del archivo: " << e.what() << endl;
-        log_error("Error durante la lectura del archivo: " + string(e.what())); // Registrar el error en el log
-        if (f) fclose(f);
+    }
+    catch (const std::exception& e) {
+        std::string error_message = "Error durante la lectura del archivo: ";
+        error_message += e.what();
+        log_error(error_message);
+        std::cerr << error_message << std::endl;
     }
 }
 
-// Función auxiliar para pedir el nombre del archivo y cargarlo
+// Función de carga de script solicitando el nombre del archivo
 void load_script() {
     char filename[500];
-    printf("Introduce el nombre del archivo: ");
-    scanf("%499s", filename);
+    std::cout << "Cargar un script:\nIntroduce el nombre del archivo: ";
+    std::cin >> filename;
     load_script(filename, true);
 }
