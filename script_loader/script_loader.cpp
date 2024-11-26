@@ -5,8 +5,9 @@
 
 using namespace std;
 
+// Función para registrar errores en un archivo log
 void log_error(const string& error_message) {
-    ofstream error_log("error_log.txt", ios::app);  // Abrir en modo append
+    ofstream error_log("error_log.txt", ios::app); // Abrir en modo append
     if (error_log.is_open()) {
         error_log << error_message << endl;
         error_log.close();
@@ -15,7 +16,8 @@ void log_error(const string& error_message) {
     }
 }
 
-void load_script(const char* filename, bool show_script = false) {
+// Definición de la función load_script
+void load_script(const char* filename, bool show_script) { // Sin valor predeterminado aquí
     string script;
     FILE* f = nullptr;
 
@@ -24,7 +26,7 @@ void load_script(const char* filename, bool show_script = false) {
         if (!f) {
             string error = "Error al abrir el archivo: " + string(filename);
             cerr << error << endl;
-            log_error(error);  // Registrar el error en el log
+            log_error(error); // Registrar el error en el log
             return;
         }
 
@@ -43,11 +45,12 @@ void load_script(const char* filename, bool show_script = false) {
 
     } catch (const exception& e) {
         cerr << "Error durante la lectura del archivo: " << e.what() << endl;
-        log_error("Error durante la lectura del archivo: " + string(e.what()));  // Registrar el error en el log
+        log_error("Error durante la lectura del archivo: " + string(e.what())); // Registrar el error en el log
         if (f) fclose(f);
     }
 }
 
+// Función auxiliar para pedir el nombre del archivo y cargarlo
 void load_script() {
     char filename[500];
     printf("Introduce el nombre del archivo: ");
